@@ -38,7 +38,7 @@ class ColorThief(object):
         """
         self.image = Image.open(file)
 
-    def get_color(self, quality=10):
+    def get_color(self, quality=None):
         """Get the dominant color.
 
         :param quality: quality settings, 1 is the highest quality, the bigger
@@ -50,7 +50,7 @@ class ColorThief(object):
         palette = self.get_palette(5, quality)
         return palette[0]
 
-    def get_palette(self, color_count=10, quality=10):
+    def get_palette(self, color_count=10, quality=None):
         """Build a color palette.  We are using the median cut algorithm to
         cluster similar colors.
 
@@ -62,6 +62,12 @@ class ColorThief(object):
         """
         image = self.image.convert('RGBA')
         width, height = image.size
+
+        if quality is None:
+            quality = int(width * height / 92160)
+            if quality == 0:
+                quality = 1
+        
         pixels = image.getdata()
         pixel_count = width * height
         valid_pixels = []
